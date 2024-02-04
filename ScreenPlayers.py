@@ -94,6 +94,5 @@ class InterfaceJogadores:
         selected_index = self.listbox_jogadores.curselection()
         if selected_index:
             nome_jogador = self.listbox_jogadores.get(selected_index)
-            messagebox.showinfo("Selecionar Jogador", f"Você selecionou o jogador: {nome_jogador}")
-
+            #messagebox.showinfo("Selecionar Jogador", f"Você selecionou o jogador: {nome_jogador}")
 
