@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from ScreenPlayers import InterfaceJogadores
 
 class Main:
     def __init__(self, root):
@@ -18,14 +19,16 @@ class Main:
 
         # Adicionar submenu "Definições" ao menu "Menu"
         self.submenu_definicoes = tk.Menu(self.menu_opcoes, tearoff=0)
-        self.submenu_definicoes.add_command(label="Jogadores", command=self.abrir_jogadores)
+        self.submenu_definicoes.add_command(label="Jogadores", command=self.abrir_interface_jogadores)
         self.menu_opcoes.add_cascade(label="Definições", menu=self.submenu_definicoes)
 
         self.menu_opcoes.add_separator()
         self.menu_opcoes.add_command(label="Sair", command=self.sair)
 
-    def abrir_jogadores(self):
-        messagebox.showinfo("Jogadores", "Aqui você pode gerenciar jogadores.")
+    def abrir_interface_jogadores(self):
+        root_jogadores = tk.Tk()
+        app_jogadores = InterfaceJogadores(root_jogadores)
+        root_jogadores.mainloop()
 
     def sair(self):
         if messagebox.askokcancel("Sair", "Tem certeza que deseja sair?"):
