@@ -17,6 +17,11 @@ unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 // Declaração da função countdown
 int countdown(int seconds);
 
+
+
+
+
+
 void setup() {
   lcd.begin(16, 2);
   lcd.backlight();
@@ -33,15 +38,11 @@ void setup() {
 }
 
 void loop() {
-  while (!isArmed) {
-    armingBombTime();
-  }
-
-  gameInProgress();
+  gamePlay();
 }
 
 
-void gameInProgress() {
+void gamePlay() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
   boolean gameWon = false;
