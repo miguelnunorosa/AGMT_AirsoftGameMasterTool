@@ -4,7 +4,6 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Endereço I2C do LCD, 16 colunas e 2 linhas
 
 const int buzzerPin = 8;
-const int buttonWhitePin = 2;
 const int buttonBluePin = 3;
 const int buttonRedPin = 4;
 
