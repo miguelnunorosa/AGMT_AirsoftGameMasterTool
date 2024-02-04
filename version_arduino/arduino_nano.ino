@@ -4,9 +4,11 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Endereço I2C do LCD, 16 colunas e 2 linhas
 
-const int buzzerPin = 8;
 const int buttonRedPin = 4;
-const int ledRedPin = 6;   // Pino para o LED vermelho
+const int buttonBluePin = 5;
+const int ledRedPin = 6;
+const int ledBluePin = 7;
+const int buzzerPin = 8;
 
 Bounce buttonRed = Bounce();    // Objeto para o botão vermelho
 
@@ -87,20 +89,7 @@ void gamePlay() {
   }
 
   // Se o tempo de jogo chegou ao fim e a equipe não ganhou, então a equipe perde
-  if (!isGameWon) {
-    lcd.clear();
-    lcd.setCursor(3, 0);
-    lcd.print("FIM DO JOGO");
-    noTone(buzzerPin);
-    digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
-    while (true) {
-      lcd.setCursor(1, 0);
-      lcd.print("EQUIPA PERDEU");
-      lcd.setCursor(4, 1);
-      lcd.print("Vermelho!");
-      // Lógica adicional se necessário
-    }
-  }
+  checkTimeLeft(isGameWon);
 }
 
 // Função para verificar se o botão vermelho foi mantido pressionado durante 10 segundos
@@ -162,6 +151,29 @@ void checkButtons() {
 }
 
 
+
+
+
+
+/*############################################
+  ##          VALIDATE VICTORY              ##           
+  ############################################
+*/
+void checkTimeLeft(boolean isGameWon){
+  if (!isGameWon) {
+    lcd.clear();
+    noTone(buzzerPin);
+    digitalWrite(ledRedPin, HIGH);  // Liga o LED vermelho
+    digitalWrite(ledBluePin, HIGH);  // Liga o LED azul
+    while (true) {
+      lcd.setCursor(3, 0);
+      lcd.print("GAME OVER");
+      lcd.setCursor(1, 1);
+      lcd.print("BOMB EXPLODED!");
+      // Lógica adicional se necessário
+    }
+  }
+}
 
 
 
