@@ -109,7 +109,7 @@ void checkButtons() {
   if (buttonRed.update()) {
     if (buttonRed.fell()) {
       lcd.clear();
-      lcd.setCursor(1, 0);
+      lcd.setCursor(3, 0);
       lcd.print("DESARMANDO");
       digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
       int result = countdown(10);  // Inicia a contagem regressiva de 10 segundos
@@ -120,15 +120,16 @@ void checkButtons() {
         lcd.setCursor(4, 1);
         lcd.print("Vermelho!");
         tone(buzzerPin, 1500, 1000);  // Toca o buzzer
-        delay(2000);  // Aguarda 2 segundos
+        delay(500);
         lcd.clear();
         lcd.setCursor(1, 0);
         lcd.print("Tempo Restante");
         lcd.setCursor(5, 1);
         lcd.print(String(totalGameTimeMillis / 60000, DEC) + "min");
-        digitalWrite(ledRedPin, LOW);  // Apaga o LED vermelho
         delay(500);
       }
+
+      digitalWrite(ledRedPin, LOW);  // Apaga o LED vermelho
     }
   }
 }
