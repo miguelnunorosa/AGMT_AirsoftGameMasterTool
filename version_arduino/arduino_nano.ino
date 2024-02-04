@@ -76,19 +76,12 @@ void armingBombTime() {
 }
 
 void gameTimeCountdown(unsigned long remainingTime) {
-  unsigned long remainingMinutes = remainingTime / (60 * 1000);
-  unsigned long remainingSeconds = (remainingTime % (60 * 1000)) / 1000;
+  unsigned long remainingMinutes = remainingTime / 60000;  // Convertendo milissegundos para minutos
 
   lcd.clear();
   lcd.setCursor(1, 0);
   lcd.print("Tempo Restante");
-  lcd.setCursor(4, 1);
-  //lcd.print(String(remainingMinutes, DEC) + "min ");
-
-  if (remainingSeconds < 10) {
-    lcd.print("0");
-  }
-
-  lcd.print(String(remainingSeconds, DEC) + " seg");
+  lcd.setCursor(5, 1);
+  lcd.print(String(remainingMinutes, DEC) + "min");
   delay(1000); // Atraso opcional para melhor visualização
 }
