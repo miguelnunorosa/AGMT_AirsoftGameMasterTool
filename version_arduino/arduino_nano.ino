@@ -14,7 +14,6 @@ unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 void setup() {
   lcd.begin(16, 2);
   lcd.backlight();
-  lcd.print("Bluetooth Projeto");
 
   pinMode(buzzerPin, OUTPUT);
   pinMode(buttonWhitePin, INPUT);
