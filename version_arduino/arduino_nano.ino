@@ -158,4 +158,3 @@ void countdown(int seconds) {
   lcd.setCursor(7, 1);
   lcd.print("0s ");
 }
-
