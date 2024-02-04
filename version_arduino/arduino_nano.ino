@@ -10,7 +10,7 @@ const int buttonRedPin = 4;
 
 boolean isArmed = false;
 int preGameArmingBombTimeInSeconds = 5;
-int totalGameTimeInMinutes = 20; // 20 minutos de jogo
+unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 
 void setup() {
   lcd.begin(16, 2);
@@ -21,6 +21,8 @@ void setup() {
   pinMode(buttonWhitePin, INPUT);
   pinMode(buttonBluePin, INPUT);
   pinMode(buttonRedPin, INPUT);
+
+  armingBombTime(); // Inicia a contagem regressiva de 5 segundos
 }
 
 void loop() {
@@ -34,10 +36,9 @@ void loop() {
 void gameInProgress() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
-  unsigned long totalTime = totalGameTimeInMinutes * 60 * 1000;
 
-  while (elapsedTime < totalTime) {
-    gameTimeCountdown(elapsedTime);
+  while (elapsedTime < totalGameTimeMillis) {
+    gameTimeCountdown(totalGameTimeMillis - elapsedTime);
 
     // Lógica do jogo aqui
 
@@ -76,9 +77,9 @@ void armingBombTime() {
   isArmed = true;
 }
 
-void gameTimeCountdown(unsigned long elapsedTime) {
-  int remainingMinutes = (totalGameTimeInMinutes - elapsedTime / (60 * 1000));
-  int remainingSeconds = (totalGameTimeInMinutes * 60 - elapsedTime / 1000) % 60;
+void gameTimeCountdown(unsigned long remainingTime) {
+  int remainingMinutes = remainingTime / (60 * 1000);
+  int remainingSeconds = (remainingTime % (60 * 1000)) / 1000;
 
   lcd.clear();
   lcd.setCursor(1, 0);
