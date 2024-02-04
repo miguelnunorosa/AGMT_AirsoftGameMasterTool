@@ -11,6 +11,7 @@ const int ledRedPin = 6;   // Pino para o LED vermelho
 Bounce buttonRed = Bounce();    // Objeto para o botão vermelho
 
 boolean isArmed = false;
+boolean isGameWon = false;
 int preGameArmingBombTimeInSeconds = 2;
 unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 
@@ -42,12 +43,22 @@ void loop() {
 }
 
 
+
+
+
+
+
+
+
+
+
+
 void gamePlay() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
-  boolean gameWon = false;
+  
 
-  while (elapsedTime < totalGameTimeMillis && !gameWon) {
+  while (elapsedTime < totalGameTimeMillis && !isGameWon) {
     gameTimeCountdown(totalGameTimeMillis - elapsedTime);
     checkButtons();  // Verifica os botões
 
@@ -68,7 +79,7 @@ void gamePlay() {
         delay(2000);  // Aguarda 2 segundos
         // Mantenha o programa aqui ou adicione lógica adicional
       }
-      gameWon = true;  // Define a flag para true para evitar o loop infinito
+      isGameWon = true;  // Define a flag para true para evitar o loop infinito
     }
 
     // Atualiza o tempo decorrido
@@ -76,7 +87,7 @@ void gamePlay() {
   }
 
   // Se o tempo de jogo chegou ao fim e a equipe não ganhou, então a equipe perde
-  if (!gameWon) {
+  if (!isGameWon) {
     lcd.clear();
     lcd.setCursor(3, 0);
     lcd.print("FIM DO JOGO");
