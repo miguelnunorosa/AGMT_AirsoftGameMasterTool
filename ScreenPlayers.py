@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import sqlite3
-from tkinter import ttk
 
 class InterfaceJogadores:
     def __init__(self, root):
         self.root = root
         self.root.title("Airsoft Game Master - Gestão Jogadores")
-        self.root.geometry("800x600")
+        self.root.geometry("400x400")
         self.root.resizable(False, False)
 
         # Criar o menu
@@ -26,66 +25,75 @@ class InterfaceJogadores:
         self.menu_opcoes.add_separator()
         self.menu_opcoes.add_command(label="Voltar", command=self.sair)
 
-        # Adicionar a tabela de jogadores
-        self.tree_jogadores = ttk.Treeview(self.root, columns=("Nome", ""))
-        self.tree_jogadores.heading("#0", text="ID")
-        self.tree_jogadores.heading("#1", text="Nome")
-        self.tree_jogadores.pack(pady=10)
+        # Variáveis para entrada de dados
+        self.nome_var = tk.StringVar()
+
+        # Frame para entrada de dados
+        self.frame_entrada = tk.Frame(self.root)
+        self.frame_entrada.pack(pady=20)
+
+        tk.Label(self.frame_entrada, text="Nome do Jogador:").grid(row=0, column=0, padx=10, pady=10)
+        entry_nome = tk.Entry(self.frame_entrada, textvariable=self.nome_var)
+        entry_nome.grid(row=0, column=1, padx=10, pady=10)
+
+        # Botão para adicionar jogador
+        tk.Button(self.frame_entrada, text="Adicionar Jogador", command=self.registrar_novo_jogador).grid(row=1, column=0, columnspan=2, pady=10)
+
+        # Widget Listbox para exibir jogadores
+        self.listbox_jogadores = tk.Listbox(self.root, width=40, height=10)
+        self.listbox_jogadores.pack(pady=20)
+
+        # Adicionar evento de clique na listagem
+        self.listbox_jogadores.bind("<ButtonRelease-1>", self.selecionar_jogador)
+
+        # Exibir jogadores já cadastrados ao iniciar a interface
+        self.atualizar_lista_jogadores()
 
     def abrir_jogadores(self):
         messagebox.showinfo("Airsoft Game Master - Gestão Jogadores", "Aqui você pode gerenciar jogadores.")
-
-        # Chamar a função para adicionar jogadores
-        self.registrar_novo_jogador()
-
-        # Atualizar a tabela de jogadores
-        self.atualizar_tabela_jogadores()
 
     def sair(self):
         self.root.destroy()
 
     def registrar_novo_jogador(self):
-        # Função para adicionar um novo jogador ao banco de dados SQLite
-        nome_jogador = simpledialog.askstring("Novo Jogador", "Digite o nome do novo jogador:")
+        nome_jogador = self.nome_var.get()
+
         if nome_jogador:
-            # Conectar ao banco de dados
             conn = sqlite3.connect("jogadores.db")
             cursor = conn.cursor()
-
-            # Criar a tabela se não existir
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS jogadores (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nome TEXT NOT NULL
                 )
             ''')
-
-            # Inserir novo jogador
             cursor.execute("INSERT INTO jogadores (nome) VALUES (?)", (nome_jogador,))
-            
-            # Commit e fechar a conexão
             conn.commit()
             conn.close()
 
-    def atualizar_tabela_jogadores(self):
-        # Função para atualizar a tabela de jogadores
-        # Limpar itens existentes na tabela
-        for item in self.tree_jogadores.get_children():
-            self.tree_jogadores.delete(item)
+            # Limpar a entrada após adicionar jogador
+            self.nome_var.set("")
 
-        # Conectar ao banco de dados
+            # Atualizar a lista de jogadores
+            self.atualizar_lista_jogadores()
+
+    def atualizar_lista_jogadores(self):
+        self.listbox_jogadores.delete(0, tk.END)  # Limpar a lista atual
+
         conn = sqlite3.connect("jogadores.db")
         cursor = conn.cursor()
-
-        # Recuperar jogadores do banco de dados
-        cursor.execute("SELECT * FROM jogadores")
+        cursor.execute("SELECT nome FROM jogadores")
         jogadores = cursor.fetchall()
 
-        # Inserir jogadores na tabela
         for jogador in jogadores:
-            self.tree_jogadores.insert("", "end", values=jogador)
+            self.listbox_jogadores.insert(tk.END, jogador[0])
 
-        # Fechar a conexão
         conn.close()
+
+    def selecionar_jogador(self, event):
+        selected_index = self.listbox_jogadores.curselection()
+        if selected_index:
+            nome_jogador = self.listbox_jogadores.get(selected_index)
+            messagebox.showinfo("Selecionar Jogador", f"Você selecionou o jogador: {nome_jogador}")
 
 
