@@ -21,8 +21,6 @@ void setup() {
   pinMode(buttonWhitePin, INPUT);
   pinMode(buttonBluePin, INPUT);
   pinMode(buttonRedPin, INPUT);
-
-  armingBombTime(); // Inicia a contagem regressiva de 5 segundos
 }
 
 void loop() {
@@ -78,8 +76,8 @@ void armingBombTime() {
 }
 
 void gameTimeCountdown(unsigned long remainingTime) {
-  int remainingMinutes = remainingTime / (60 * 1000);
-  int remainingSeconds = (remainingTime % (60 * 1000)) / 1000;
+  unsigned long remainingMinutes = remainingTime / (60 * 1000);
+  unsigned long remainingSeconds = (remainingTime % (60 * 1000)) / 1000;
 
   lcd.clear();
   lcd.setCursor(1, 0);
