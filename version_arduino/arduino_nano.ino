@@ -82,13 +82,13 @@ void gameTimeCountdown(unsigned long remainingTime) {
   lcd.clear();
   lcd.setCursor(1, 0);
   lcd.print("Tempo Restante:");
-  lcd.setCursor(6, 1);
-  lcd.print(String(remainingMinutes, DEC) + "min ");
+  lcd.setCursor(3, 1);
+  //lcd.print(String(remainingMinutes, DEC) + "min ");
 
   if (remainingSeconds < 10) {
     lcd.print("0");
   }
 
-  lcd.print(String(remainingSeconds, DEC) + "s");
+  lcd.print(String(remainingSeconds, DEC) + " seg");
   delay(1000); // Atraso opcional para melhor visualização
 }
