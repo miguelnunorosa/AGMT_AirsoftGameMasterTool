@@ -5,31 +5,26 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Endereço I2C do LCD, 16 colunas e 2 linhas
 
 const int buzzerPin = 8;
-const int buttonBluePin = 5;  // Agora o botão azul está no pino 3
 const int buttonRedPin = 4;
-const int ledBluePin = 7;  // Pino para o LED azul
 const int ledRedPin = 6;   // Pino para o LED vermelho
 
-Bounce buttonBlue = Bounce();   // Objeto para o botão azul
 Bounce buttonRed = Bounce();    // Objeto para o botão vermelho
 
 boolean isArmed = false;
 int preGameArmingBombTimeInSeconds = 2;
 unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 
+// Declaração da função countdown
+int countdown(int seconds);
+
 void setup() {
   lcd.begin(16, 2);
   lcd.backlight();
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(buttonBluePin, INPUT_PULLUP);
   pinMode(buttonRedPin, INPUT_PULLUP);
 
-  pinMode(ledBluePin, OUTPUT);  // Configura o pino do LED azul como saída
-  pinMode(ledRedPin, OUTPUT);   // Configura o pino do LED vermelho como saída
-
-  buttonBlue.attach(buttonBluePin);
-  buttonBlue.interval(5);   // Intervalo de debounce de 5ms
+  pinMode(ledRedPin, OUTPUT);  // Configura o pino do LED vermelho como saída
 
   buttonRed.attach(buttonRedPin);
   buttonRed.interval(5);    // Intervalo de debounce de 5ms
@@ -64,9 +59,14 @@ void gameInProgress() {
   lcd.setCursor(3, 0);
   lcd.print("FIM DO JOGO");
   noTone(buzzerPin);
-  digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
-  digitalWrite(ledRedPin, LOW);   // Desliga o LED vermelho
+  digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
   while (true) {
+    lcd.setCursor(1, 0);
+    lcd.print("EQUIPA GANHOU");
+    lcd.setCursor(4, 1);
+    lcd.print("Vermelho!");
+    tone(buzzerPin, 1500, 1000);  // Toca o buzzer
+    delay(2000);  // Aguarda 2 segundos
     // Mantenha o programa aqui ou adicione lógica adicional
   }
 }
@@ -104,44 +104,36 @@ void gameTimeCountdown(unsigned long remainingTime) {
 }
 
 void checkButtons() {
+  static boolean redButtonPressed = false;
+
   if (buttonRed.update()) {
     if (buttonRed.fell()) {
       lcd.clear();
       lcd.setCursor(1, 0);
       lcd.print("DESARMANDO");
       digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
-      countdown(10);
-      digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
-      delay(500);
-    } else if (buttonRed.rose()) {
-      lcd.clear();
-      lcd.setCursor(1, 0);
-      lcd.print("Tempo Restante");
-      lcd.setCursor(5, 1);
-      lcd.print(String(totalGameTimeMillis / 60000, DEC) + "min");
-    }
-  }
-
-  if (buttonBlue.update()) {
-    if (buttonBlue.fell()) {
-      lcd.clear();
-      lcd.setCursor(3, 0);
-      lcd.print("DESARMANDO");
-      digitalWrite(ledBluePin, HIGH);  // Acende o LED azul
-      countdown(10);
-      digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
-      delay(500);
-    } else if (buttonBlue.rose()) {
-      lcd.clear();
-      lcd.setCursor(1, 0);
-      lcd.print("Tempo Restante");
-      lcd.setCursor(5, 1);
-      lcd.print(String(totalGameTimeMillis / 60000, DEC) + "min");
+      int result = countdown(10);  // Inicia a contagem regressiva de 10 segundos
+      if (result == 0) {
+        lcd.clear();
+        lcd.setCursor(1, 0);
+        lcd.print("EQUIPA GANHOU");
+        lcd.setCursor(4, 1);
+        lcd.print("Vermelho!");
+        tone(buzzerPin, 1500, 1000);  // Toca o buzzer
+        delay(2000);  // Aguarda 2 segundos
+        lcd.clear();
+        lcd.setCursor(1, 0);
+        lcd.print("Tempo Restante");
+        lcd.setCursor(5, 1);
+        lcd.print(String(totalGameTimeMillis / 60000, DEC) + "min");
+        digitalWrite(ledRedPin, LOW);  // Apaga o LED vermelho
+        delay(500);
+      }
     }
   }
 }
 
-void countdown(int seconds) {
+int countdown(int seconds) {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
 
@@ -149,7 +141,9 @@ void countdown(int seconds) {
     lcd.setCursor(7, 1);
     lcd.print(String((seconds * 1000 - elapsedTime) / 1000, DEC) + "s ");
     
-    checkButtons();  // Verifica os botões durante a contagem
+    if (buttonRed.update() && buttonRed.rose()) {
+      return 1;  // Retorna 1 se o botão foi solto durante a contagem regressiva
+    }
 
     elapsedTime = millis() - startTime;
     delay(500);  // Ajuste o intervalo conforme necessário
@@ -157,4 +151,6 @@ void countdown(int seconds) {
 
   lcd.setCursor(7, 1);
   lcd.print("0s ");
+  
+  return 0;  // Retorna 0 se a contagem chegou ao fim
 }
