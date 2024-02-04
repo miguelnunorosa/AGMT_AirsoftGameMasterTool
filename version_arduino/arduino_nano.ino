@@ -40,36 +40,79 @@ void loop() {
   gameInProgress();
 }
 
+// ...
+
 void gameInProgress() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
+  boolean gameWon = false;
 
-  while (elapsedTime < totalGameTimeMillis) {
+  while (elapsedTime < totalGameTimeMillis && !gameWon) {
     gameTimeCountdown(totalGameTimeMillis - elapsedTime);
     checkButtons();  // Verifica os botões
 
-    // Lógica do jogo aqui
+    // Verifica se a equipe ganhou
+    if (buttonRedHeld()) {
+      lcd.clear();
+      lcd.setCursor(3, 0);
+      lcd.print("FIM DO JOGO");
+      noTone(buzzerPin);
+      digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
+      while (true) {
+        lcd.setCursor(1, 0);
+        lcd.print("EQUIPA GANHOU");
+        lcd.setCursor(4, 1);
+        lcd.print("Vermelho!");
+        tone(buzzerPin, 1500, 1000);  // Toca o buzzer
+        delay(2000);  // Aguarda 2 segundos
+        // Mantenha o programa aqui ou adicione lógica adicional
+      }
+      gameWon = true;  // Define a flag para true para evitar o loop infinito
+    }
 
     // Atualiza o tempo decorrido
     elapsedTime = millis() - startTime;
   }
 
-  // Fim do jogo
-  lcd.clear();
-  lcd.setCursor(3, 0);
-  lcd.print("FIM DO JOGO");
-  noTone(buzzerPin);
-  digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
-  while (true) {
-    lcd.setCursor(1, 0);
-    lcd.print("EQUIPA GANHOU");
-    lcd.setCursor(4, 1);
-    lcd.print("Vermelho!");
-    tone(buzzerPin, 1500, 1000);  // Toca o buzzer
-    delay(2000);  // Aguarda 2 segundos
-    // Mantenha o programa aqui ou adicione lógica adicional
+  // Se o tempo de jogo chegou ao fim e a equipe não ganhou, então a equipe perde
+  if (!gameWon) {
+    lcd.clear();
+    lcd.setCursor(3, 0);
+    lcd.print("FIM DO JOGO");
+    noTone(buzzerPin);
+    digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
+    while (true) {
+      lcd.setCursor(1, 0);
+      lcd.print("EQUIPA PERDEU");
+      lcd.setCursor(4, 1);
+      lcd.print("Vermelho!");
+      // Lógica adicional se necessário
+    }
   }
 }
+
+// Função para verificar se o botão vermelho foi mantido pressionado durante 10 segundos
+boolean buttonRedHeld() {
+  unsigned long startTime = millis();
+  unsigned long elapsedTime = 0;
+  int holdTime = 10000;  // 10 segundos
+
+  while (buttonRed.read() == LOW) {
+    elapsedTime = millis() - startTime;
+
+    // Verifica se o botão foi mantido pressionado pelo tempo necessário
+    if (elapsedTime >= holdTime) {
+      return true;
+    }
+
+    delay(10);  // Ajuste o intervalo conforme necessário
+  }
+
+  return false;
+}
+
+
+
 
 void armingBombTime() {
   lcd.clear();
