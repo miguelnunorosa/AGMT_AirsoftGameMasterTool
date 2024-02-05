@@ -127,12 +127,9 @@ void checkRedButton() {
         lcd.setCursor(4, 1);
         lcd.print("Vermelho!");
         tone(buzzerPin, 1500, 1000);  // Toca o buzzer
-        delay(500);
-        lcd.clear();
-        lcd.setCursor(1, 0);
-        lcd.print("Tempo Restante");
-        lcd.setCursor(5, 1);
-        lcd.print(String(totalGameTimeMillis / 60000, DEC) + "min");
+        isGameWon = true;  // Define a flag para true para evitar o loop infinito
+        isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+        
         delay(500);
       }
 
