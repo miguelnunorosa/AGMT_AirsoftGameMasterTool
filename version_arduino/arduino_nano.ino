@@ -16,8 +16,8 @@ boolean isGameWon = false;
 boolean isVictoryAnnounced = false;  // Flag para controlar se a vitória já foi anunciada
 boolean isRedTeamWinner = false;
 boolean isBlueTeamWinner = false;
-int preGameArmingBombTimeInSeconds = 2;
-int desarmCountdownInSeconds = 2;
+int preGameArmingBombTimeInSeconds = 40;
+int desarmCountdownInSeconds = 3;
 unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
 
 
@@ -45,20 +45,12 @@ void setup() {
   buttonBlue.attach(buttonBluePin);
   buttonBlue.interval(5);    // Intervalo de debounce de 5ms
 
-  armingBombTime(); // Inicia a contagem regressiva de 5 segundos
+  armingBombTime(); // Inicia a contagem regressiva para começar o jogo
 }
 
 void loop() {
   gamePlay();
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -71,22 +63,11 @@ void gamePlay() {
   while (elapsedTime < totalGameTimeMillis && !isGameWon) {
     gameTimeCountdown(totalGameTimeMillis - elapsedTime);
     checkButtons();
-
-    if(isGameWon==true){
-      while (true) {
-        if(isRedTeamWinner == true){
-          digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
-        }else if(isBlueTeamWinner == true){
-          digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
-        }
-        tone(buzzerPin, 1500, 1000);  // Toca o buzzer
-      }
-    }
+    checkTeamDesarmSuccessfully();
 
     // Atualiza o tempo decorrido
     elapsedTime = millis() - startTime;
   }
-
 
   // Se o tempo de jogo chegou ao fim e a equipe não ganhou, então a equipe perde
   checkTimeLeft(isGameWon);
@@ -111,14 +92,9 @@ void checkRedButton() {
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
     while (true) {
       digitalWrite(ledRedPin, HIGH);  // Liga o LED vermelho
-      lcd.setCursor(0, 0);
-      lcd.print("EQUIPA  VERMELHA");
-      lcd.setCursor(4, 1);
-      lcd.print("GANHOU!");
-      delay(10);  // Aguarda 10ms
     }
-    isGameWon = true;  // Define a flag para true para evitar o loop infinito
-    isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+    //isGameWon = true;  // Define a flag para true para evitar o loop infinito
+    //isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
   }
 
   if (buttonRed.update()) {
@@ -129,23 +105,26 @@ void checkRedButton() {
       digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
       
       int result = countdown(desarmCountdownInSeconds);  // Inicia a contagem regressiva de 10 segundos
-      if (result == 0) {
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("EQUIPA  VERMELHA");
-        lcd.setCursor(5, 1);
-        lcd.print("GANHOU!");
-        isGameWon = true;  // Define a flag para true para evitar o loop infinito
-        isRedTeamWinner = true;
-        isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
-        delay(500);
-      }
+      checkRedTeamDesarmSuccessfully(result);
 
       digitalWrite(ledRedPin, LOW);  // Apaga o LED vermelho
     }
   }
 }
 
+void checkRedTeamDesarmSuccessfully(int result){
+  if (result == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("EQUIPA  VERMELHA");
+    lcd.setCursor(5, 1);
+    lcd.print("GANHOU!");
+    isGameWon = true;  // Define a flag para true para evitar o loop infinito
+    isRedTeamWinner = true;
+    isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+    delay(500);
+  }
+}
 
 // Função para verificar se o botão vermelho foi mantido pressionado durante 10 segundos
 boolean buttonRedHeld() {
@@ -169,9 +148,6 @@ boolean buttonRedHeld() {
 
 
 
-
-
-
 void checkBlueButton() {
   static boolean blueButtonPressed = false;
 
@@ -182,11 +158,6 @@ void checkBlueButton() {
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
     while (true) {
       digitalWrite(ledBluePin, HIGH);  // Liga o LED azul
-      lcd.setCursor(2, 0);
-      lcd.print("EQUIPA  AZUL");
-      lcd.setCursor(4, 1);
-      lcd.print("GANHOU!");
-      delay(10);  // Aguarda 10ms
     }
   }
 
@@ -198,23 +169,26 @@ void checkBlueButton() {
       digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
       
       int result = countdown(desarmCountdownInSeconds);  // Inicia a contagem regressiva de 10 segundos
-      if (result == 0) {
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("EQUIPA  AZUL");
-        lcd.setCursor(5, 1);
-        lcd.print("GANHOU!");
-        isGameWon = true;  // Define a flag para true para evitar o loop infinito
-        isBlueTeamWinner = true;
-        isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
-        delay(500);
-      }
+      checkBlueTeamDesarmSuccessfully(result);
 
       digitalWrite(ledBluePin, LOW);  // Apaga o LED vermelho
     }
   }
 }
 
+void checkBlueTeamDesarmSuccessfully(int result){
+  if (result == 0) {
+    lcd.clear();
+    lcd.setCursor(2, 0);
+    lcd.print("EQUIPA  AZUL");
+    lcd.setCursor(5, 1);
+    lcd.print("GANHOU!");
+    isGameWon = true;  // Define a flag para true para evitar o loop infinito
+    isBlueTeamWinner = true;
+    isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+    delay(500);
+  }
+}
 
 // Função para verificar se o botão vermelho foi mantido pressionado durante 10 segundos
 boolean buttonBlueHeld() {
@@ -256,6 +230,20 @@ void checkTimeLeft(boolean isGameWon){
       lcd.setCursor(1, 1);
       lcd.print("BOMB EXPLODED!");
       // Lógica adicional se necessário
+    }
+  }
+}
+
+
+void checkTeamDesarmSuccessfully(){
+  if(isGameWon==true){
+    while (true) {
+      if(isRedTeamWinner == true){
+        digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
+      }else if(isBlueTeamWinner == true){
+        digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
+      }
+      tone(buzzerPin, 1500, 1000);  // Toca o buzzer
     }
   }
 }
