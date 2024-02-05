@@ -50,23 +50,19 @@ void loop() {
 }
 
 
-
 void gamePlay() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
   
-
   while (elapsedTime < totalGameTimeMillis && !isGameWon) {
     gameTimeCountdown(totalGameTimeMillis - elapsedTime);
     checkButtons();
     checkTeamDesarmSuccessfully();
 
-    // Atualiza o tempo decorrido
-    elapsedTime = millis() - startTime;
+    elapsedTime = millis() - startTime; // Atualiza o tempo decorrido
   }
 
-  // Se o tempo de jogo chegou ao fim bomba explode, equipas perdem
-  checkTimeLeft(isGameWon);
+  checkTimeLeft(isGameWon); // Se o tempo de jogo terminou, a bomba explode, equipas perdem
 }
 
 
@@ -80,14 +76,11 @@ void checkButtons(){
 void checkRedButton() {
   static boolean redButtonPressed = false;
 
-  // Verifica se a equipe ganhou
-  if (buttonRedHeld() && !isVictoryAnnounced) {
+  if (buttonRedHeld() && !isVictoryAnnounced) { // Verifica se a equipa ganhou
     noTone(buzzerPin);
     digitalWrite(ledRedPin, LOW);   // Desliga o LED vermelho
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
-    while (true) {
-      digitalWrite(ledRedPin, HIGH);  // Liga o LED vermelho
-    }
+    while (true) { digitalWrite(ledRedPin, HIGH); } // Liga o LED vermelho 
   }
 
   if (buttonRed.update()) {
@@ -143,14 +136,11 @@ boolean buttonRedHeld() {
 void checkBlueButton() {
   static boolean blueButtonPressed = false;
 
-  // Verifica se a equipe ganhou
-  if (buttonBlueHeld() && !isVictoryAnnounced) {
+  if (buttonBlueHeld() && !isVictoryAnnounced) {  // Verifica se a equipa ganhou
     noTone(buzzerPin);
     digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
-    while (true) {
-      digitalWrite(ledBluePin, HIGH);
-    }
+    while (true) { digitalWrite(ledBluePin, HIGH); }
   }
 
   if (buttonBlue.update()) {
@@ -238,7 +228,7 @@ void checkTeamDesarmSuccessfully(){
   if(isBombExploded == true){
     while (true) {
       digitalWrite(ledRedPin, HIGH);   // Acende o LED vermelho
-      digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
+      digitalWrite(ledBluePin, HIGH);  // Acende o LED azul
       tone(buzzerPin, 1500, 1000);     // Toca o buzzer
     }
   }
@@ -276,7 +266,7 @@ void armingBombTime() {
 
 //game time countdown (OK)
 void gameTimeCountdown(unsigned long remainingTime) {
-  unsigned long remainingMinutes = remainingTime / 60000;  // Convertendo milissegundos para minutos
+  unsigned long remainingMinutes = remainingTime / 60000;  // Converter milissegundos para minutos
 
   lcd.clear();
   lcd.setCursor(1, 0);
