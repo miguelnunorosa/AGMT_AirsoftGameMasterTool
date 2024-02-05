@@ -317,6 +317,7 @@ void armingBombTime() {
   lcd.setCursor(3, 1);
   lcd.print("A R M A D A");
   noTone(buzzerPin);
+  delay(2000);    // Espera 2 segundos a informar que a bomba foi armada e começa o jogo
 }
 
 
@@ -350,7 +351,7 @@ int countdown(int seconds) {
     lcd.setCursor(7, 1);
     lcd.print(String((seconds * 1000 - elapsedTime) / 1000, DEC) + "");
     
-    if (buttonRed.update() && buttonRed.rose()) {
+    if ( (buttonBlue.update() && buttonBlue.rose()) || (buttonRed.update() && buttonRed.rose()) ) {
       return 1;   // Retorna 1 se o botão foi solto durante a contagem regressiva
     }
 
