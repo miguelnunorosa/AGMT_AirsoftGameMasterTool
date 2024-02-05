@@ -16,6 +16,7 @@ boolean isGameWon = false;
 boolean isVictoryAnnounced = false;  // Flag para controlar se a vitória já foi anunciada
 boolean isRedTeamWinner = false;
 boolean isBlueTeamWinner = false;
+boolean isBombExploded = false;
 int preGameArmingBombTimeInSeconds = 40;
 int desarmCountdownInSeconds = 3;
 unsigned long totalGameTimeMillis = 1200000; // 20 minutos em milissegundos
@@ -69,7 +70,7 @@ void gamePlay() {
     elapsedTime = millis() - startTime;
   }
 
-  // Se o tempo de jogo chegou ao fim e a equipe não ganhou, então a equipe perde
+  // Se o tempo de jogo chegou ao fim bomba explode, equipas perdem
   checkTimeLeft(isGameWon);
 }
 
@@ -220,6 +221,7 @@ boolean buttonBlueHeld() {
 */
 void checkTimeLeft(boolean isGameWon){
   if (!isGameWon) {
+    isBombExploded = true;
     lcd.clear();
     noTone(buzzerPin);
     digitalWrite(ledRedPin, HIGH);  // Liga o LED vermelho
@@ -229,20 +231,27 @@ void checkTimeLeft(boolean isGameWon){
       lcd.print("GAME OVER");
       lcd.setCursor(1, 1);
       lcd.print("BOMB EXPLODED!");
-      // Lógica adicional se necessário
     }
   }
 }
 
 
 void checkTeamDesarmSuccessfully(){
-  if(isGameWon==true){
+  if(isGameWon == true){
     while (true) {
       if(isRedTeamWinner == true){
         digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
       }else if(isBlueTeamWinner == true){
         digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
       }
+      tone(buzzerPin, 1500, 1000);  // Toca o buzzer
+    }
+  }
+
+  if(isBombExploded == true){
+    while (true) {
+      digitalWrite(ledRedPin, HIGH);  // Acende o LED vermelho
+      digitalWrite(ledBluePin, HIGH);  // Acende o LED vermelho
       tone(buzzerPin, 1500, 1000);  // Toca o buzzer
     }
   }
