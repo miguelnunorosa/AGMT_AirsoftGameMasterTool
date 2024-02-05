@@ -15,8 +15,7 @@ boolean isGameWon = false;                   // Flag para controlar se o jogo fo
 boolean isVictoryAnnounced = false;          // Flag para controlar se a vitória já foi anunciada
 boolean isRedTeamWinner = false;             // Flag para controlar se a equipa vermelha ganhou
 boolean isBlueTeamWinner = false;            // Flag para controlar se a equipa azul ganhou
-//boolean isBombExploded = false;              // Flag para controlar se a bomba explodiu
-int preGameArmingBombTimeInSeconds = 2;     // Tempo (segundos) para colocar a bomba no centro do campo
+int preGameArmingBombTimeInSeconds = 59;     // Tempo (segundos) para colocar a bomba no centro do campo
 int desarmCountdownInSeconds = 6;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 
@@ -95,6 +94,7 @@ void checkRedButton() {
     noTone(buzzerPin);
     digitalWrite(ledRedPin, LOW);   // Desliga o LED vermelho
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
+    while (true) { digitalWrite(ledRedPin, HIGH); } // Liga o LED vermelho 
   }
 
   if (buttonRed.update()) {
@@ -168,6 +168,7 @@ void checkBlueButton() {
     noTone(buzzerPin);
     digitalWrite(ledRedPin, LOW);  // Desliga o LED vermelho
     digitalWrite(ledBluePin, LOW);  // Desliga o LED azul
+    while (true) { digitalWrite(ledBluePin, HIGH); }
   }
 
   if (buttonBlue.update()) {
@@ -245,7 +246,6 @@ boolean buttonBlueHeld() {
 */
 void checkTimeLeftToBombExplode(boolean isGameWon){
   if (!isGameWon) {
-    //isBombExploded = true;
     lcd.clear();
     noTone(buzzerPin);
     digitalWrite(ledRedPin, HIGH);   // Liga o LED vermelho
@@ -255,6 +255,7 @@ void checkTimeLeftToBombExplode(boolean isGameWon){
       lcd.print("GAME OVER");
       lcd.setCursor(1, 1);
       lcd.print("BOMB EXPLODED!");
+      tone(buzzerPin, 1500, 1000);
     }
   }
 }
@@ -300,7 +301,7 @@ void checkTeamDesarmSuccessfully(){
 */
 void armingBombTime() {
   lcd.clear();
-  lcd.print(" ARMANDO BOMBA");
+  lcd.print(" ARMANDO  BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
     lcd.setCursor(3, 1);
@@ -310,11 +311,12 @@ void armingBombTime() {
   }
 
   lcd.clear();
-  lcd.setCursor(6, 0);
-  lcd.print("BOMBA");
-  lcd.setCursor(3, 1);
-  lcd.print("A R M A D A");
+  lcd.setCursor(2, 0);
+  lcd.print("BOMBA ARMADA");
+  lcd.setCursor(4, 1);
+  lcd.print("INICIAR");
   noTone(buzzerPin);
+  delay(2000);    // Espera 2 segundos a informar que a bomba foi armada e começa o jogo
 }
 
 
@@ -348,7 +350,7 @@ int countdown(int seconds) {
     lcd.setCursor(7, 1);
     lcd.print(String((seconds * 1000 - elapsedTime) / 1000, DEC) + "");
     
-    if (buttonRed.update() && buttonRed.rose()) {
+    if ( (buttonBlue.update() && buttonBlue.rose()) || (buttonRed.update() && buttonRed.rose()) ) {
       return 1;   // Retorna 1 se o botão foi solto durante a contagem regressiva
     }
 
