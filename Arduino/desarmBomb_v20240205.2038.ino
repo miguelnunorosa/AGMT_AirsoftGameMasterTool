@@ -121,6 +121,7 @@ void checkRedButton() {
 */
 void checkRedTeamDesarmSuccessfully(int result){
   if (result == 0) {
+    Serial.println("RESULT: RED_TEAM_WON");
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isRedTeamWinner = true;     // Define a flag da equipa vermelha vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
@@ -195,6 +196,7 @@ void checkBlueButton() {
 */
 void checkBlueTeamDesarmSuccessfully(int result){
   if (result == 0) {
+    Serial.println("RESULT: BLUE_TEAM_WON");
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isBlueTeamWinner = true;    // Define a flag da equipa azul vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
@@ -246,6 +248,7 @@ boolean buttonBlueHeld() {
 */
 void checkTimeLeftToBombExplode(boolean isGameWon){
   if (!isGameWon) {
+    Serial.println("RESULT: BOMB_EXPLODED");
     lcd.clear();
     noTone(buzzerPin);
     digitalWrite(ledRedPin, HIGH);   // Liga o LED vermelho
