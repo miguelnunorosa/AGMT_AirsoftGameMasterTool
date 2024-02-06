@@ -27,6 +27,7 @@ int countdown(int seconds);    // Declaração da função countdown
 
 
 void setup() {
+  Serial.begin(9600);
   lcd.begin(16, 2);
   lcd.backlight();
 
