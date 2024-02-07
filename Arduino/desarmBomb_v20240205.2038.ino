@@ -15,7 +15,7 @@ boolean isGameWon = false;                   // Flag para controlar se o jogo fo
 boolean isVictoryAnnounced = false;          // Flag para controlar se a vitória já foi anunciada
 boolean isRedTeamWinner = false;             // Flag para controlar se a equipa vermelha ganhou
 boolean isBlueTeamWinner = false;            // Flag para controlar se a equipa azul ganhou
-int preGameArmingBombTimeInSeconds = 59;     // Tempo (segundos) para colocar a bomba no centro do campo
+int preGameArmingBombTimeInSeconds = 3;     // Tempo (segundos) para colocar a bomba no centro do campo
 int desarmCountdownInSeconds = 6;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 
@@ -27,7 +27,6 @@ int countdown(int seconds);    // Declaração da função countdown
 
 
 void setup() {
-  Serial.begin(9600);
   lcd.begin(16, 2);
   lcd.backlight();
 
@@ -122,7 +121,6 @@ void checkRedButton() {
 */
 void checkRedTeamDesarmSuccessfully(int result){
   if (result == 0) {
-    Serial.println("RESULT: RED_TEAM_WON");
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isRedTeamWinner = true;     // Define a flag da equipa vermelha vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
@@ -197,7 +195,6 @@ void checkBlueButton() {
 */
 void checkBlueTeamDesarmSuccessfully(int result){
   if (result == 0) {
-    Serial.println("RESULT: BLUE_TEAM_WON");
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isBlueTeamWinner = true;    // Define a flag da equipa azul vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
@@ -249,7 +246,6 @@ boolean buttonBlueHeld() {
 */
 void checkTimeLeftToBombExplode(boolean isGameWon){
   if (!isGameWon) {
-    Serial.println("RESULT: BOMB_EXPLODED");
     lcd.clear();
     noTone(buzzerPin);
     digitalWrite(ledRedPin, HIGH);   // Liga o LED vermelho
@@ -313,8 +309,7 @@ void armingBombTime() {
     tone(buzzerPin, 1000, 500); // Beep a cada segundo
     delay(1000);
   }
-  
-  Serial.println("RESULT: BOMB_PLANTED");
+
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("BOMBA ARMADA");
@@ -331,15 +326,18 @@ void armingBombTime() {
   @param remainingTime: Tempo restante (em milisegundos)
 */
 void gameTimeCountdown(unsigned long remainingTime) {
-  unsigned long remainingMinutes = remainingTime / 60000;  // Converter milissegundos para minutos
+  unsigned long remainingSeconds = remainingTime / 1000;  // Converter milissegundos para segundos
+  unsigned int minutes = remainingSeconds / 60;  // Obter os minutos restantes
+  unsigned int seconds = remainingSeconds % 60;  // Obter os segundos restantes
 
   lcd.clear();
   lcd.setCursor(1, 0);
   lcd.print("Tempo Restante");
   lcd.setCursor(5, 1);
-  lcd.print(String(remainingMinutes, DEC) + "min");
+  lcd.print(String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC));
   delay(1000); // Atraso opcional para melhor visualização
 }
+
 
 
 /*
