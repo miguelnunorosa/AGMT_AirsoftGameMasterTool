@@ -313,7 +313,8 @@ void armingBombTime() {
     tone(buzzerPin, 1000, 500); // Beep a cada segundo
     delay(1000);
   }
-
+  
+  Serial.println("RESULT: BOMB_PLANTED");
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("BOMBA ARMADA");
