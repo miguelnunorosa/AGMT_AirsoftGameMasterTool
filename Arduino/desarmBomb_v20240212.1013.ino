@@ -24,7 +24,7 @@ enum Winner {
 GameState gameState = ARMING_BOMB;
 Winner winner = NO_WINNER;
 
-const int preGameArmingBombTimeInSeconds = 3; // Tempo (segundos) para colocar a bomba no centro do campo
+const int preGameArmingBombTimeInSeconds = 59; // Tempo (segundos) para colocar a bomba no centro do campo
 const int desarmCountdownInSeconds = 3;      // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 const unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 unsigned long gameStartTime;
@@ -133,13 +133,11 @@ void messageBox(int line, int col, String message){
 
 int countdown(int seconds, bool displayOnLCD) {
   unsigned long startTime = millis();
+  if (displayOnLCD) { messageBox(7, 1, ""); } // Limpa a linha no LCD
+  
   while (millis() - startTime < seconds * 1000) {
-    if (buttonRed.update() && buttonRed.rose()) {
-      return 0;
-    }
-    if (buttonBlue.update() && buttonBlue.rose()) {
-      return 0;
-    }
+    if (buttonRed.update() && buttonRed.rose()) { return 0; }
+    if (buttonBlue.update() && buttonBlue.rose()) { return 0; }
     if (displayOnLCD) {
       String timerToLCD = (String((seconds * 1000 - (millis() - startTime)) / 1000, DEC) + "");
       messageBox(7, 1, timerToLCD);
@@ -147,6 +145,7 @@ int countdown(int seconds, bool displayOnLCD) {
   }
   return 1;
 }
+
 
 
 void armingBombTime() {
