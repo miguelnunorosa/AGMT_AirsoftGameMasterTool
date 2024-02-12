@@ -93,7 +93,7 @@ void checkButton(Bounce &button, int ledPin, Winner team) {
     lcd.print("DESARMANDO");
     digitalWrite(ledPin, HIGH);
 
-    if (countdown(desarmCountdownInSeconds)) {
+    if (countdown(desarmCountdownInSeconds, true)) {
       winner = team;
       gameState = GAME_OVER;
     }
@@ -101,6 +101,7 @@ void checkButton(Bounce &button, int ledPin, Winner team) {
     digitalWrite(ledPin, LOW);
   }
 }
+
 
 void gameOver() {
   lcd.clear();
@@ -126,7 +127,7 @@ void gameOver() {
   }
 }
 
-int countdown(int seconds) {
+int countdown(int seconds, bool displayOnLCD) {
   unsigned long startTime = millis();
   while (millis() - startTime < seconds * 1000) {
     if (buttonRed.update() && buttonRed.rose()) {
@@ -135,14 +136,19 @@ int countdown(int seconds) {
     if (buttonBlue.update() && buttonBlue.rose()) {
       return 0;
     }
+    if (displayOnLCD) {
+      lcd.setCursor(7, 1);
+      lcd.print(String((seconds * 1000 - (millis() - startTime)) / 1000, DEC) + "");
+    }
   }
   return 1;
 }
 
+
 void armingBombTime() {
   gameStartTime = millis();
   lcd.clear();
-  lcd.print("  ARMAR  BOMBA");
+  lcd.print("  ARMAR BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
     lcd.setCursor(3, 1);
@@ -179,3 +185,4 @@ void gameTimeCountdown(unsigned long remainingTime) {
     lcd.print(String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC));
   }
 }
+
