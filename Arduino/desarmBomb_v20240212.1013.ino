@@ -89,6 +89,7 @@ void checkButtons() {
 
 void checkButton(Bounce &button, int ledPin, Winner team) {
   if (button.update() && button.fell()) {
+    lcd.clear();
     messageBox(3, 0, "DESARMANDO");
     
     digitalWrite(ledPin, HIGH);
@@ -104,6 +105,7 @@ void checkButton(Bounce &button, int ledPin, Winner team) {
 
 
 void gameOver() {
+  lcd.clear();
   if (winner == RED_TEAM) {
     messageBox(0, 0, "EQUIPA  VERMELHA");
     messageBox(5, 1, "GANHOU!");
@@ -122,7 +124,6 @@ void gameOver() {
 
 
 void messageBox(int line, int col, String message){
-  lcd.clear();
   lcd.setCursor(line, col);
   lcd.print(message);
 }
@@ -150,6 +151,7 @@ int countdown(int seconds, bool displayOnLCD) {
 
 void armingBombTime() {
   gameStartTime = millis();  
+  lcd.clear();
   messageBox(0, 0, "  ARMAR BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
@@ -159,6 +161,7 @@ void armingBombTime() {
     delay(1000);
   }
 
+  lcd.clear();
   messageBox(2, 0, "BOMBA ARMADA");
   messageBox(4, 1, "INICIAR");
   tone(buzzerPin, 1500, 1000);
@@ -172,12 +175,13 @@ void gameTimeCountdown(unsigned long remainingTime) {
   // Atualiza o LCD apenas se houver uma mudança no tempo restante
   if (currentTime - lastUpdateTime >= 1000) { // Atualiza a cada segundo
     lastUpdateTime = currentTime;
-    String timerToLCD = (String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC))
 
     unsigned long remainingSeconds = remainingTime / 1000;  // Converter milissegundos para segundos
     unsigned int minutes = remainingSeconds / 60;  // Obter os minutos restantes
     unsigned int seconds = remainingSeconds % 60;  // Obter os segundos restantes
+    String timerToLCD = (String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC));
 
+    lcd.clear();
     messageBox(1, 0, "Tempo Restante");
     messageBox(5, 1, timerToLCD);
   }
