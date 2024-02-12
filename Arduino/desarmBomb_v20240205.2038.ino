@@ -1,4 +1,14 @@
-#include <Wire.h>
+/*
+Projeto que recria uma bomba FALSA com um temporizdor. Este é um tipo de jogo que saiu diretamente dos
+jogos de computador para os campos de airsoft.
+
+É um rascunho, pode (e deve) ser ainda melhorado.
+
+@Author: Miguel Rosa
+@date: Feb 05, 2024
+*/
+
+
 #include <LiquidCrystal_I2C.h>
 #include <Bounce2.h>
 
@@ -16,7 +26,7 @@ boolean isVictoryAnnounced = false;          // Flag para controlar se a vitóri
 boolean isRedTeamWinner = false;             // Flag para controlar se a equipa vermelha ganhou
 boolean isBlueTeamWinner = false;            // Flag para controlar se a equipa azul ganhou
 int preGameArmingBombTimeInSeconds = 3;     // Tempo (segundos) para colocar a bomba no centro do campo
-int desarmCountdownInSeconds = 6;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
+int desarmCountdownInSeconds = 4;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 
 
@@ -27,7 +37,8 @@ int countdown(int seconds);    // Declaração da função countdown
 
 
 void setup() {
-  lcd.begin(16, 2);
+  Serial.begin(9600);
+  lcd.init();
   lcd.backlight();
 
   pinMode(buzzerPin, OUTPUT);
@@ -59,6 +70,7 @@ void loop() {
 void gamePlay() {
   unsigned long startTime = millis();
   unsigned long elapsedTime = 0;
+  Serial.println("RESULT: BOMB_ARMED");
   
   while (elapsedTime < totalGameTimeMillis && !isGameWon) { //Enquanto o elapsed time for menor que o tempo total de jogo E não há vencedor
     gameTimeCountdown(totalGameTimeMillis - elapsedTime);
@@ -124,6 +136,7 @@ void checkRedTeamDesarmSuccessfully(int result){
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isRedTeamWinner = true;     // Define a flag da equipa vermelha vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+    Serial.println("RESULT: RED_TEAM_WON");
 
     lcd.clear();
     lcd.setCursor(0, 0);
@@ -198,6 +211,7 @@ void checkBlueTeamDesarmSuccessfully(int result){
     isGameWon = true;           // Define a flag para true para evitar o loop infinito
     isBlueTeamWinner = true;    // Define a flag da equipa azul vencedora como true
     isVictoryAnnounced = true;  // Define a flag de vitória anunciada como true
+    Serial.println("RESULT: BLUE_TEAM_WON");
 
     lcd.clear();
     lcd.setCursor(2, 0);
@@ -246,10 +260,12 @@ boolean buttonBlueHeld() {
 */
 void checkTimeLeftToBombExplode(boolean isGameWon){
   if (!isGameWon) {
+    Serial.println("RESULT: BOMB_EXPLODED");
     lcd.clear();
     noTone(buzzerPin);
     digitalWrite(ledRedPin, HIGH);   // Liga o LED vermelho
     digitalWrite(ledBluePin, HIGH);  // Liga o LED azul
+    
     while (true) {
       lcd.setCursor(3, 0);
       lcd.print("GAME OVER");
@@ -271,12 +287,8 @@ void checkTeamDesarmSuccessfully(){
   // Comparação sempre em "true"
   if (isGameWon) { 
     while (true) {
-      if (isRedTeamWinner) {
-          digitalWrite(ledRedPin, HIGH);
-      }
-      if (isBlueTeamWinner) {
-          digitalWrite(ledBluePin, HIGH);
-      }
+      if (isRedTeamWinner) { digitalWrite(ledRedPin, HIGH); }
+      if (isBlueTeamWinner) { digitalWrite(ledBluePin, HIGH); }
       tone(buzzerPin, 1500, 1000);
     }
   }
@@ -315,7 +327,7 @@ void armingBombTime() {
   lcd.print("BOMBA ARMADA");
   lcd.setCursor(4, 1);
   lcd.print("INICIAR");
-  noTone(buzzerPin);
+  tone(buzzerPin, 1500, 1000);
   delay(2000);    // Espera 2 segundos a informar que a bomba foi armada e começa o jogo
 }
 
