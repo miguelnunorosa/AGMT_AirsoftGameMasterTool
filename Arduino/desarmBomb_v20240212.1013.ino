@@ -86,11 +86,11 @@ void checkButtons() {
   checkButton(buttonBlue, ledBluePin, BLUE_TEAM);
 }
 
+
 void checkButton(Bounce &button, int ledPin, Winner team) {
   if (button.update() && button.fell()) {
-    lcd.clear();
-    lcd.setCursor(3, 0);
-    lcd.print("DESARMANDO");
+    messageBox(3, 0, "DESARMANDO");
+    
     digitalWrite(ledPin, HIGH);
 
     if (countdown(desarmCountdownInSeconds, true)) {
@@ -104,28 +104,31 @@ void checkButton(Bounce &button, int ledPin, Winner team) {
 
 
 void gameOver() {
-  lcd.clear();
   if (winner == RED_TEAM) {
-    lcd.setCursor(0, 0);
-    lcd.print("EQUIPA  VERMELHA");
-    lcd.setCursor(5, 1);
-    lcd.print("GANHOU!");
+    messageBox(0, 0, "EQUIPA  VERMELHA");
+    messageBox(5, 1, "GANHOU!");
   } else if (winner == BLUE_TEAM) {
-    lcd.setCursor(2, 0);
-    lcd.print("EQUIPA  AZUL");
-    lcd.setCursor(5, 1);
-    lcd.print("GANHOU!");
+    messageBox(2, 0, "EQUIPA  AZUL");
+    messageBox(5, 1, "GANHOU!");
   } else {
-    lcd.setCursor(3, 0);
-    lcd.print("GAME OVER");
-    lcd.setCursor(1, 1);
-    lcd.print("BOMB EXPLODED!");
+    messageBox(3, 0, "GAME OVER");
+    messageBox(1, 1, "BOMB EXPLODED");
   }
   tone(buzzerPin, 1500, 1000);
   while (true) {
     // Loop infinito, indicando o resultado do jogo
   }
 }
+
+
+void messageBox(int line, int col, String message){
+  lcd.clear();
+  lcd.setCursor(line, col);
+  lcd.print(message);
+}
+
+
+
 
 int countdown(int seconds, bool displayOnLCD) {
   unsigned long startTime = millis();
@@ -137,8 +140,8 @@ int countdown(int seconds, bool displayOnLCD) {
       return 0;
     }
     if (displayOnLCD) {
-      lcd.setCursor(7, 1);
-      lcd.print(String((seconds * 1000 - (millis() - startTime)) / 1000, DEC) + "");
+      String timerToLCD = (String((seconds * 1000 - (millis() - startTime)) / 1000, DEC) + "");
+      messageBox(7, 1, timerToLCD);
     }
   }
   return 1;
@@ -146,22 +149,18 @@ int countdown(int seconds, bool displayOnLCD) {
 
 
 void armingBombTime() {
-  gameStartTime = millis();
-  lcd.clear();
-  lcd.print("  ARMAR BOMBA");
+  gameStartTime = millis();  
+  messageBox(0, 0, "  ARMAR BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
-    lcd.setCursor(3, 1);
-    lcd.print("Tempo: " + String(i) + "s");
+    String timerToLCD = ("Tempo: " + String(i) + "s");
+    messageBox(3, 1, timerToLCD);
     tone(buzzerPin, 1000, 500); // Beep a cada segundo
     delay(1000);
   }
 
-  lcd.clear();
-  lcd.setCursor(2, 0);
-  lcd.print("BOMBA ARMADA");
-  lcd.setCursor(4, 1);
-  lcd.print("INICIAR");
+  messageBox(2, 0, "BOMBA ARMADA");
+  messageBox(4, 1, "INICIAR");
   tone(buzzerPin, 1500, 1000);
   delay(2000);    // Espera 2 segundos a informar que a bomba foi armada e começa o jogo
 }
@@ -173,16 +172,14 @@ void gameTimeCountdown(unsigned long remainingTime) {
   // Atualiza o LCD apenas se houver uma mudança no tempo restante
   if (currentTime - lastUpdateTime >= 1000) { // Atualiza a cada segundo
     lastUpdateTime = currentTime;
+    String timerToLCD = (String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC))
 
     unsigned long remainingSeconds = remainingTime / 1000;  // Converter milissegundos para segundos
     unsigned int minutes = remainingSeconds / 60;  // Obter os minutos restantes
     unsigned int seconds = remainingSeconds % 60;  // Obter os segundos restantes
 
-    lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print("Tempo Restante");
-    lcd.setCursor(5, 1);
-    lcd.print(String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC));
+    messageBox(1, 0, "Tempo Restante");
+    messageBox(5, 1, timerToLCD);
   }
 }
 
