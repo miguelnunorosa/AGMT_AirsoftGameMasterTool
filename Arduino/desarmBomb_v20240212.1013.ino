@@ -24,8 +24,8 @@ enum Winner {
 GameState gameState = ARMING_BOMB;
 Winner winner = NO_WINNER;
 
-const int preGameArmingBombTimeInSeconds = 19;     // Tempo (segundos) para colocar a bomba no centro do campo
-const int desarmCountdownInSeconds = 3;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
+const int preGameArmingBombTimeInSeconds = 19; // Tempo (segundos) para colocar a bomba no centro do campo
+const int desarmCountdownInSeconds = 3;      // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 const unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 unsigned long gameStartTime;
 boolean bombArmed = false;
@@ -82,12 +82,12 @@ void gamePlay() {
 }
 
 void checkButtons() {
-  checkButton(buttonRed, ledRedPin, RED_TEAM);
-  checkButton(buttonBlue, ledBluePin, BLUE_TEAM);
+  checkSpecificButton(buttonRed, ledRedPin, RED_TEAM);
+  checkSpecificButton(buttonBlue, ledBluePin, BLUE_TEAM);
 }
 
 
-void checkButton(Bounce &button, int ledPin, Winner team) {
+void checkSpecificButton(Bounce &button, int ledPin, Winner team) {
   if (button.update() && button.fell()) {
     lcd.clear();
     messageBox(3, 0, "DESARMANDO");
@@ -176,8 +176,8 @@ void gameTimeCountdown(unsigned long remainingTime) {
     lastUpdateTime = currentTime;
 
     unsigned long remainingSeconds = remainingTime / 1000;  // Converter milissegundos para segundos
-    unsigned int minutes = remainingSeconds / 60;           // Obter os minutos restantes
-    unsigned int seconds = remainingSeconds % 60;           // Obter os segundos restantes
+    unsigned int minutes = remainingSeconds / 60;  // Obter os minutos restantes
+    unsigned int seconds = remainingSeconds % 60;  // Obter os segundos restantes
     String timerToLCD = (String(minutes, DEC) + ":" + (seconds < 10 ? "0" : "") + String(seconds, DEC));
 
     lcd.clear();
