@@ -1,3 +1,13 @@
+/*
+Projeto que recria uma bomba FALSA com um temporizador. Este é um tipo de jogo que saiu diretamente dos
+jogos de computador para os campos de airsoft.
+
+É um rascunho, pode (e deve) ser ainda melhorado.
+
+@Author: Miguel Rosa
+@date: Feb 12, 2024
+*/
+
 #include <LiquidCrystal_I2C.h>
 #include <Bounce2.h>
 
@@ -24,8 +34,8 @@ enum Winner {
 GameState gameState = ARMING_BOMB;
 Winner winner = NO_WINNER;
 
-const int preGameArmingBombTimeInSeconds = 19; // Tempo (segundos) para colocar a bomba no centro do campo
-const int desarmCountdownInSeconds = 3;      // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
+const int preGameArmingBombTimeInSeconds = 19;     // Tempo (segundos) para colocar a bomba no centro do campo
+const int desarmCountdownInSeconds = 3;            // Tempo (segundos) que se deve manter pressionado o botão para desarmar bomba
 const unsigned long totalGameTimeMillis = 1200000; // Tempo (milisegundos) duração do jogo (até a bomba explodir) (1200000 ms = 20 min)
 unsigned long gameStartTime;
 boolean bombArmed = false;
@@ -39,10 +49,10 @@ void setup() {
   lcd.backlight();
 
   pinMode(buzzerPin, OUTPUT);
-  pinMode(buttonRedPin, INPUT_PULLUP);
-  pinMode(buttonBluePin, INPUT_PULLUP);
   pinMode(ledRedPin, OUTPUT);
   pinMode(ledBluePin, OUTPUT);
+  pinMode(buttonRedPin, INPUT_PULLUP);
+  pinMode(buttonBluePin, INPUT_PULLUP);
 
   buttonRed.attach(buttonRedPin);
   buttonBlue.attach(buttonBluePin);
