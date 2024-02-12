@@ -161,7 +161,7 @@ int countdown(int seconds, bool displayOnLCD) {
 void armingBombTime() {
   gameStartTime = millis();  
   lcd.clear();
-  messageBox(0, 0, "  ARMAR  BOMBA");
+  messageBox(2, 0, "ARMAR  BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
     String timerToLCD = ("Tempo: " + String(i) + " ");
@@ -195,4 +195,3 @@ void gameTimeCountdown(unsigned long remainingTime) {
     messageBox(5, 1, timerToLCD);
   }
 }
-
