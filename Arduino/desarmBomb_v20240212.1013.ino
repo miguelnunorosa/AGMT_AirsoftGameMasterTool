@@ -151,10 +151,10 @@ int countdown(int seconds, bool displayOnLCD) {
 void armingBombTime() {
   gameStartTime = millis();  
   lcd.clear();
-  messageBox(0, 0, "  ARMAR BOMBA");
+  messageBox(0, 0, "  ARMAR  BOMBA");
 
   for (int i = preGameArmingBombTimeInSeconds; i > 0; i--) {
-    String timerToLCD = ("Tempo: " + String(i) + "s");
+    String timerToLCD = ("Tempo: " + String(i));
     messageBox(3, 1, timerToLCD);
     tone(buzzerPin, 1000, 500); // Beep a cada segundo
     delay(1000);
