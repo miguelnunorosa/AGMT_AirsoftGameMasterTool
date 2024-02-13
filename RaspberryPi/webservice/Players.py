@@ -4,6 +4,15 @@ import sqlite3
 dbPath = 'settings/database/agmtdatabase.db'
 
 
+def create_table():
+    conn = sqlite3.connect(dbPath)
+    cursor = conn.cursor()
+    create_table_query = '''CREATE TABLE IF NOT EXISTS "players" (
+                            "id"	INTEGER NOT NULL,
+                            "name"	TEXT NOT NULL,
+                            "isActive"	INTEGER NOT NULL DEFAULT 0,
+                            PRIMARY KEY("id" AUTOINCREMENT)
+                        )'''
 
 
 def get_players():

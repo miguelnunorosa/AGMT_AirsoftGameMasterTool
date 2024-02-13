@@ -9,6 +9,7 @@ appTitle = 'Airsoft Game Master Tool - Results'
 
 @app.route('/')
 def index():
+    Players.create_table()
     return render_template('index.html', title=appTitle)
 
 
@@ -24,6 +25,7 @@ def adicionar_jogador():
     ativo = request.form.get('ativo', 0)
     Players.insert_players(nome, ativo)
     return redirect(url_for('jogadores'))
+
 
 
 
