@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import Players
 import sqlite3
 
 
@@ -10,19 +11,18 @@ dbPath = 'settings/database/agmtdatabase.db'
 
 
 
-@app.route('/jogadores') # Rota para a página de jogadores
-def jogadores():
-    conn = sqlite3.connect(dbPath)                                # Conectar ao banco de dados
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM players")                       # Executar a query para obter os jogadores
-    jogadores = cursor.fetchall()                                 # Obter todos os jogadores
-    conn.close()                                                  # Fechar a conexão com o banco de dados
-    return render_template('jogadores.html', jogadores=jogadores) # Renderizar o template com os dados dos jogadores
-
 
 @app.route('/')
 def index():
     return render_template('index.html', title=appTitle)
+
+
+
+@app.route('/jogadores')
+def jogadores():
+    # Obtém a lista de jogadores do banco de dados
+    jogadores = Players.get_players()
+    return render_template('jogadores.html', jogadores=jogadores)
 
 
 if __name__ == '__main__':

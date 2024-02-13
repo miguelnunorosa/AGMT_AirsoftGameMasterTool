@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGMT - Airsot Game Master Tool</title>
+  <!-- Incluindo os arquivos CSS do Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Estilo para a barra de navegação */
+    .navbar-dark .navbar-nav .nav-link {
+      color: #ffffff; /* Cor do texto dos links */
+    }
+    /* Estilo para o fundo da barra de navegação */
+    .navbar-dark {
+      background-color: #24272b; /* Cor de fundo da barra de navegação */
+    }
+    .body-dark {
+      background-color: #343a40; /* Cor de fundo da barra de navegação */
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="body-dark">
+  <!-- Barra de navegação -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">AGMT</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('jogadores') }}">Jogadores</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Sobre</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo da página -->
+  <div id="main-content" class="container mt-4">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Incluindo os arquivos JavaScript do Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
