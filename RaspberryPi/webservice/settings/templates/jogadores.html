@@ -1,19 +1,106 @@
-{% extends "index.html" %}
+{% extends "template.html" %}
 
+{% block head %}
+    <!-- Incluir os arquivos CSS do DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+{% endblock %}
 
 {% block content %}
+    <h2>Lista de Jogadores</h2>
 
-    <!-- Conteúdo da página -->
-    <div id="main-content" class="container mt-4">
-        <h1>Listar</h1>
-
-        <!-- Lista de jogadores -->
-        <h2>Jogadores:</h2>
-        <ul>
-            {% for jogador in jogadores %}
-            <li>{{ jogador[1] }}</li>
-            {% endfor %}
-        </ul>
+    <div class="row mb-3">
+        <div class="col">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarJogador">Adicionar Jogador</button>
+        </div>
     </div>
 
+    <table id="jogadores-table" class="display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for jogador in jogadores %}
+                <tr>
+                    <td>{{ jogador[0] }}</td>
+                    <td>{{ jogador[1] }}</td>
+                    <td>{{ "Sim" if jogador[2] == 1 else "Não" }}</td>
+                    <td><a href="#" class="btn btn-primary btn-editar">Editar</a></td> <!-- Botão Editar -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    <!-- Modal Adicionar Jogador -->
+    <div class="modal fade" id="modalAdicionarJogador" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Adicionar Jogador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formAdicionarJogador">
+                <div class="modal-body">
+                <div class="mb-3">
+                    <label for="nomeJogador" class="form-label">Nome:</label>
+                    <input type="text" class="form-control" id="nomeJogador" name="nome" required>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="ativoJogador" name="ativo">
+                    <label class="form-check-label" for="ativoJogador">Ativo</label>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+  
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- Incluir os arquivos JavaScript do DataTables e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#jogadores-table').DataTable({
+                "paging": true,
+                "lengthMenu": [5, 10, 25, 50, 100],
+                "pageLength": 5
+            });
+        });
+
+        // Script para lidar com o clique nos botões de edição
+        $(document).on('click', '.btn-editar', function(e) {
+            // Coloque aqui o código para lidar com a ação de editar jogador
+            e.preventDefault(); // Evita que o link seja seguido
+            alert('Editar jogador: ' + $(this).closest('tr').find('td:first').text()); // Exemplo de alerta com o ID do jogador
+        });
+
+        $(document).ready(function() {
+            $('#formAdicionarJogador').submit(function(e) {
+                e.preventDefault();
+                var nome = $('#nomeJogador').val();
+                var ativo = $('#ativoJogador').is(':checked') ? 1 : 0;
+                
+                // Enviar dados para o servidor (por meio de AJAX ou outro método)
+                // Aqui você pode chamar a rota Flask para salvar os dados no banco de dados
+
+                // Fechar a modal após o envio do formulário
+                $('#modalAdicionarJogador').modal('hide');
+            });
+        });
+    </script>
 {% endblock %}

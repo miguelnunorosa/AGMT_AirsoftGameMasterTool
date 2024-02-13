@@ -1,0 +1,17 @@
+/* Cores primárias */
+:root {
+    --primary-color: #333333; /* Cinza escuro */
+    --secondary-color: #666666; /* Cinza médio */
+    --accent-color: #999999; /* Cinza claro */
+}
+
+/* Cores de texto */
+:root {
+    --text-color: #ffffff; /* Branco para texto */
+}
+
+/* Cor de fundo do corpo */
+body {
+    background-color: var(--primary-color); /* Fundo em cinza escuro */
+    color: var(--text-color); /* Texto em branco */
+}
