@@ -32,3 +32,13 @@ def insert_players(nome, ativo):
     print(f'Nome: {nome}, Ativo: {ativo}')
     conn.commit()
     conn.close()
+
+
+def get_active_players():
+    conn = sqlite3.connect(dbPath)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM players WHERE isActive = 1")
+    jogadores = cursor.fetchall()
+    conn.close()
+    return jogadores
+

@@ -26,6 +26,11 @@ def adicionar_jogador():
     Players.insert_players(nome, ativo)
     return redirect(url_for('jogadores'))
 
+@app.route('/jogadores')
+def jogadores_equipas_modal():
+    jogadores_ativos = Players.get_active_players()
+    return render_template('jogadores.html', jogadores_ativos=jogadores_ativos)
+
 
 
 
