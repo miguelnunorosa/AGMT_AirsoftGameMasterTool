@@ -1,6 +1,8 @@
 import sqlite3
 
+
 dbPath = 'settings/database/agmtdatabase.db'
+
 
 
 
@@ -13,12 +15,11 @@ def get_players():
     return players
 
 
-
 def insert_players(nome, ativo):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
     
-    cursor.execute('INSERT INTO jogadores (nome, ativo) VALUES (?, ?)', (nome, ativo))
+    cursor.execute('INSERT INTO players (name, isActive) VALUES (?, ?)', (nome, ativo))
+    print(f'Nome: {nome}, Ativo: {ativo}')
     conn.commit()
     conn.close()
-    return redirect(url_for('jogadores'))

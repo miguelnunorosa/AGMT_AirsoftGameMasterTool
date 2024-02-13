@@ -92,15 +92,35 @@
         $(document).ready(function() {
             $('#formAdicionarJogador').submit(function(e) {
                 e.preventDefault();
+                
+                // Obter os valores do formulário
                 var nome = $('#nomeJogador').val();
                 var ativo = $('#ativoJogador').is(':checked') ? 1 : 0;
                 
-                // Enviar dados para o servidor (por meio de AJAX ou outro método)
-                // Aqui você pode chamar a rota Flask para salvar os dados no banco de dados
+                // Enviar os dados do formulário para o servidor usando AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '/jogadores',
+                    data: {
+                        nome: nome,
+                        ativo: ativo
+                    },
+                    success: function(response) {
+                        // Se a inserção no banco de dados foi bem-sucedida, 
+                        // redirecionar para a página de jogadores
+                        window.location.href = '/jogadores';
+                    },
+                    error: function(xhr, status, error) {
+                        // Se houve algum erro, exibir uma mensagem de erro
+                        console.error(error);
+                        alert('Ocorreu um erro ao adicionar o jogador. Por favor, tente novamente.');
+                    }
+                });
 
                 // Fechar a modal após o envio do formulário
                 $('#modalAdicionarJogador').modal('hide');
             });
         });
+
     </script>
 {% endblock %}
