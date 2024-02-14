@@ -29,7 +29,9 @@
                     <td>{{ jogador[0] }}</td>
                     <td>{{ jogador[1] }}</td>
                     <td>{{ "Sim" if jogador[2] == 1 else "Não" }}</td>
-                    <td><a href="#" class="btn btn-primary btn-editar">Editar</a></td> <!-- Botão Editar -->
+                    <td>
+                        <button type="button" class="btn btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalEditarJogador" data-jogador-id="{{ jogador[0] }}">Editar</button>
+                    </td> <!-- Botão Editar -->
                 </tr>
             {% endfor %}
         </tbody>
@@ -65,6 +67,34 @@
         </div>
     </div>
 
+    <!-- Modal de Edição de Jogador -->
+    <div class="modal fade" id="modalEditarJogador" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Jogador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEditarJogador">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editNomeJogador" class="form-label">Nome:</label>
+                            <input type="text" class="form-control" id="editNomeJogador" name="nome" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editAtivoJogador" name="ativo">
+                            <label class="form-check-label" for="editAtivoJogador">Ativo</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
   
 
 {% endblock %}
@@ -82,13 +112,8 @@
             });
         });
 
-        // Script para lidar com o clique nos botões de edição
-        $(document).on('click', '.btn-editar', function(e) {
-            // Coloque aqui o código para lidar com a ação de editar jogador
-            e.preventDefault(); // Evita que o link seja seguido
-            alert('Editar jogador: ' + $(this).closest('tr').find('td:first').text()); // Exemplo de alerta com o ID do jogador
-        });
-
+    
+        // ADICIONAR JOGADOR AO BANCO DE DADOS
         $(document).ready(function() {
             $('#formAdicionarJogador').submit(function(e) {
                 e.preventDefault();
@@ -121,6 +146,76 @@
                 $('#modalAdicionarJogador').modal('hide');
             });
         });
+
+        //EDITAR JOGADOR SELECIONADO
+        $(document).ready(function() {
+            // Preencher campos da modal de edição quando o botão "Editar" é clicado
+            $(document).on('click', '.btn-editar', function(e) {
+                e.preventDefault();
+                var jogadorId = $(this).data('jogador-id');
+                var nome = $('#editNomeJogador');
+                var ativo = $('#editAtivoJogador');
+                
+                // Fazer uma solicitação AJAX para buscar os detalhes do jogador com o ID jogadorId
+                $.ajax({
+                    type: 'GET',
+                    url: '/detalhes_jogador/' + jogadorId, // Rota no servidor Flask para buscar detalhes do jogador
+                    success: function(response) {
+                        // Preencher os campos da modal com os detalhes do jogador
+                        $('#editNomeJogador').val(response.nome);
+                        $('#editAtivoJogador').prop('checked', response.ativo);
+                        
+                        // Armazenar o ID do jogador na modal de edição para uso posterior
+                        $('#formEditarJogador').data('jogador-id', jogadorId);
+
+
+                        // Exibir a modal de edição
+                        $('#modalEditarJogador').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert('Ocorreu um erro ao buscar os detalhes do jogador. Por favor, tente novamente.');
+                    }
+                });
+            });
+        
+            // Submeter o formulário de edição
+            $('#formEditarJogador').submit(function(e) {
+                e.preventDefault();
+
+                // Obter os dados do formulário
+                var nome = $('#editNomeJogador').val();
+                var ativo = $('#editAtivoJogador').is(':checked') ? 1 : 0;
+                var jogadorId = $(this).data('jogador-id'); // Se necessário, obtém o ID do jogador
+
+                // Enviar os dados do formulário para o servidor usando AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '/atualizar_jogador/' + jogadorId, // Rota no servidor Flask para atualizar o jogador
+                    data: {
+                        nome: nome,
+                        ativo: ativo
+                    },
+                    success: function(response) {
+                        // Lidar com a resposta do servidor
+                        // Por exemplo, redirecionar para a página de jogadores após a atualização
+                        window.location.href = '/jogadores';
+                    },
+                    error: function(xhr, status, error) {
+                        // Se houve algum erro, exibir uma mensagem de erro
+                        console.error(error);
+                        alert('Ocorreu um erro ao atualizar o jogador. Por favor, tente novamente.');
+                    }
+                });
+
+                // Fechar a modal de edição após o envio do formulário
+                $('#modalEditarJogador').modal('hide');
+            });
+
+        });
+        
+        
+        
 
     </script>
 {% endblock %}
