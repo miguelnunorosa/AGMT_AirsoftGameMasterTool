@@ -93,7 +93,7 @@
                 </form>
             </div>
         </div>
-</div>
+    </div>
 
   
 
@@ -104,6 +104,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
+
+        // DATATABLE SETTINGS
         $(document).ready(function() {
             $('#jogadores-table').DataTable({
                 "paging": true,
@@ -150,34 +152,36 @@
         //EDITAR JOGADOR SELECIONADO
         $(document).ready(function() {
             // Preencher campos da modal de edição quando o botão "Editar" é clicado
-            $(document).on('click', '.btn-editar', function(e) {
-                e.preventDefault();
-                var jogadorId = $(this).data('jogador-id');
-                var nome = $('#editNomeJogador');
-                var ativo = $('#editAtivoJogador');
-                
-                // Fazer uma solicitação AJAX para buscar os detalhes do jogador com o ID jogadorId
-                $.ajax({
-                    type: 'GET',
-                    url: '/detalhes_jogador/' + jogadorId, // Rota no servidor Flask para buscar detalhes do jogador
-                    success: function(response) {
-                        // Preencher os campos da modal com os detalhes do jogador
-                        $('#editNomeJogador').val(response.nome);
-                        $('#editAtivoJogador').prop('checked', response.ativo);
-                        
-                        // Armazenar o ID do jogador na modal de edição para uso posterior
-                        $('#formEditarJogador').data('jogador-id', jogadorId);
+$(document).on('click', '.btn-editar', function(e) {
+    e.preventDefault();
+    var jogadorId = $(this).data('jogador-id');
+    
+    // Fazer uma solicitação AJAX para buscar os detalhes do jogador com o ID jogadorId
+    $.ajax({
+        type: 'GET',
+        url: '/detalhes_jogador/' + jogadorId,
+        success: function(response) {
+            // Preencher os campos da modal com os detalhes do jogador
+            $('#editNomeJogador').val(response.name);
+            $('#editAtivoJogador').prop('checked', response.isActive);
+            
+            // Armazenar o ID do jogador na modal de edição para uso posterior
+            $('#formEditarJogador').data('jogador-id', jogadorId);
+
+            console.log(response)
+
+            // Exibir a modal de edição
+            $('#modalEditarJogador').modal('show');
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+            alert('Ocorreu um erro ao buscar os detalhes do jogador. Por favor, tente novamente.');
+        }
+    });
+});
 
 
-                        // Exibir a modal de edição
-                        $('#modalEditarJogador').modal('show');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                        alert('Ocorreu um erro ao buscar os detalhes do jogador. Por favor, tente novamente.');
-                    }
-                });
-            });
+
         
             // Submeter o formulário de edição
             $('#formEditarJogador').submit(function(e) {
@@ -197,8 +201,7 @@
                         ativo: ativo
                     },
                     success: function(response) {
-                        // Lidar com a resposta do servidor
-                        // Por exemplo, redirecionar para a página de jogadores após a atualização
+                        // Lidar com a resposta do servidor. Por exemplo, redirecionar para a página de jogadores após a atualização
                         window.location.href = '/jogadores';
                     },
                     error: function(xhr, status, error) {

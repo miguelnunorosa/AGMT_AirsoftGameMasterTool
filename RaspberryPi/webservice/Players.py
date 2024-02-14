@@ -26,12 +26,10 @@ def get_players():
     return players
 
 
-
 def insert_players(nome, ativo):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
     cursor.execute('INSERT INTO players (name, isActive) VALUES (?, ?)', (nome, ativo))
-    print(f'Nome: {nome}, Ativo: {ativo}')
     conn.commit()
     conn.close()
     
@@ -40,9 +38,9 @@ def update_players(nome, ativo, jogador_id):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
     cursor.execute('UPDATE players SET name = ?, isActive = ? WHERE id = ?', (nome, ativo, jogador_id))
+    print(f'ID: {jogador_id}, Nome: {nome}, Ativo: {ativo}')
     conn.commit()
     conn.close()
-
 
 
 def get_player_by_id(jogador_id):
@@ -52,7 +50,6 @@ def get_player_by_id(jogador_id):
     jogador = cursor.fetchone()
     conn.close()
     return jogador
-
 
 
 def get_active_players():
