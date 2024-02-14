@@ -11,6 +11,7 @@
     <div class="row mb-3">
         <div class="col">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarJogador">Adicionar Jogador</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalGerarEquipas">Gerar Equipas</button>
         </div>
     </div>
 
@@ -20,7 +21,7 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Ativo</th>
-                <th>Ações</th>
+                <th>Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +31,7 @@
                     <td>{{ jogador[1] }}</td>
                     <td><input type="checkbox" class="checkbox-ativo" data-jogador-id="{{ jogador[0] }}" {% if jogador[2] == 1 %}checked{% endif %}></td>
                     <td>
-                        <button type="button" class="btn btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalEditarJogador" data-jogador-id="{{ jogador[0] }}">Editar</button>
+                        <button type="button" class="btn btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalEditarJogador" data-jogador-id="{{ jogador[0] }}" alt="Editar jogador"><i class="fa-regular fa-pen-to-square"></i></button>
                     </td> <!-- Botão Editar -->
                 </tr>
             {% endfor %}
@@ -94,6 +95,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal gerar equipas -->
+    <div class="modal fade" id="modalGerarEquipas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gerar Equipas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Equipa Azul:</h6>
+                    <ul id="equipeAzul">
+                        {% for jogador in equipe_azul %}
+                            <li>{{ jogador[1] }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h6>Equipa Vermelha:</h6>
+                    <ul id="equipeVermelha">
+                        {% for jogador in equipe_vermelha %}
+                            <li>{{ jogador[1] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
 
   
 
@@ -241,6 +273,26 @@
                 });
             });
         });
+
+        $(document).ready(function() {
+            $('#btnGerarEquipas').click(function() {
+                // Fazer uma solicitação AJAX para obter as equipes de jogadores ativos
+                $.ajax({
+                    type: 'GET',
+                    url: '/gerar_equipas',
+                    success: function(response) {
+                        // Exibir a modal com as equipes de jogadores
+                        $('#modalGerarEquipas .modal-body').html(response);
+                        $('#modalGerarEquipas').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert('Ocorreu um erro ao gerar as equipes. Por favor, tente novamente.');
+                    }
+                });
+            });
+        });
+        
         
         
 

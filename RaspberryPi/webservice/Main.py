@@ -58,12 +58,15 @@ def atualizar_ativo(jogador_id):
     # Retornar uma resposta de sucesso para o cliente
     return '', 200
 
-
-@app.route('/jogadores')
-def jogadores_equipas_modal():
+@app.route('/gerar_equipas')
+def gerar_equipas():
     jogadores_ativos = Players.get_active_players()
-    return render_template('jogadores.html', jogadores_ativos=jogadores_ativos)
-
+    # Divida os jogadores ativos em duas equipes
+    metade = len(jogadores_ativos) // 2
+    equipe_azul = jogadores_ativos[:metade]
+    equipe_vermelha = jogadores_ativos[metade:]
+    print(equipe_azul)
+    return render_template('jogadores.html', equipe_azul=equipe_azul, equipe_vermelha=equipe_vermelha)
 
 
 

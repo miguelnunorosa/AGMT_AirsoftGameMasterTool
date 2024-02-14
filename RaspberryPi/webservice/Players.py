@@ -63,6 +63,7 @@ def get_active_players():
     conn.close()
     return jogadores
 
+
 def update_player_ativo(jogador_id, ativo):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
