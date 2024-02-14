@@ -45,9 +45,18 @@ def atualizar_jogador(jogador_id):
     # Obter os dados do formulário
     nome = request.form['nome']
     ativo = request.form.get('ativo', 0)
-
     Players.update_players(nome, ativo, jogador_id)
     return redirect(url_for('jogadores'))
+
+@app.route('/atualizar_ativo/<int:jogador_id>', methods=['POST'])
+def atualizar_ativo(jogador_id):
+    ativo = request.form['ativo']
+    
+    # Aqui você pode chamar a função para atualizar o estado "ativo" do jogador no banco de dados
+    Players.update_player_ativo(jogador_id, ativo)
+    
+    # Retornar uma resposta de sucesso para o cliente
+    return '', 200
 
 
 @app.route('/jogadores')

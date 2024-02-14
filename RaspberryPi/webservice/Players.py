@@ -26,6 +26,7 @@ def get_players():
     return players
 
 
+
 def insert_players(nome, ativo):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
@@ -43,6 +44,7 @@ def update_players(nome, ativo, jogador_id):
     conn.close()
 
 
+
 def get_player_by_id(jogador_id):
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
@@ -52,6 +54,7 @@ def get_player_by_id(jogador_id):
     return jogador
 
 
+
 def get_active_players():
     conn = sqlite3.connect(dbPath)
     cursor = conn.cursor()
@@ -59,4 +62,11 @@ def get_active_players():
     jogadores = cursor.fetchall()
     conn.close()
     return jogadores
+
+def update_player_ativo(jogador_id, ativo):
+    conn = sqlite3.connect(dbPath)
+    cursor = conn.cursor()
+    cursor.execute('UPDATE players SET isActive = ? WHERE id = ?', (ativo, jogador_id))
+    conn.commit()
+    conn.close()
 

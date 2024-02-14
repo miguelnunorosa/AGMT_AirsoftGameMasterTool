@@ -28,7 +28,7 @@
                 <tr>
                     <td>{{ jogador[0] }}</td>
                     <td>{{ jogador[1] }}</td>
-                    <td>{{ "Sim" if jogador[2] == 1 else "Não" }}</td>
+                    <td><input type="checkbox" class="checkbox-ativo" data-jogador-id="{{ jogador[0] }}" {% if jogador[2] == 1 %}checked{% endif %}></td>
                     <td>
                         <button type="button" class="btn btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#modalEditarJogador" data-jogador-id="{{ jogador[0] }}">Editar</button>
                     </td> <!-- Botão Editar -->
@@ -152,33 +152,33 @@
         //EDITAR JOGADOR SELECIONADO
         $(document).ready(function() {
             // Preencher campos da modal de edição quando o botão "Editar" é clicado
-$(document).on('click', '.btn-editar', function(e) {
-    e.preventDefault();
-    var jogadorId = $(this).data('jogador-id');
-    
-    // Fazer uma solicitação AJAX para buscar os detalhes do jogador com o ID jogadorId
-    $.ajax({
-        type: 'GET',
-        url: '/detalhes_jogador/' + jogadorId,
-        success: function(response) {
-            // Preencher os campos da modal com os detalhes do jogador
-            $('#editNomeJogador').val(response.name);
-            $('#editAtivoJogador').prop('checked', response.isActive);
-            
-            // Armazenar o ID do jogador na modal de edição para uso posterior
-            $('#formEditarJogador').data('jogador-id', jogadorId);
+            $(document).on('click', '.btn-editar', function(e) {
+                e.preventDefault();
+                var jogadorId = $(this).data('jogador-id');
+                
+                // Fazer uma solicitação AJAX para buscar os detalhes do jogador com o ID jogadorId
+                $.ajax({
+                    type: 'GET',
+                    url: '/detalhes_jogador/' + jogadorId,
+                    success: function(response) {
+                        // Preencher os campos da modal com os detalhes do jogador
+                        $('#editNomeJogador').val(response.name);
+                        $('#editAtivoJogador').prop('checked', response.isActive);
+                        
+                        // Armazenar o ID do jogador na modal de edição para uso posterior
+                        $('#formEditarJogador').data('jogador-id', jogadorId);
 
-            console.log(response)
+                        console.log(response)
 
-            // Exibir a modal de edição
-            $('#modalEditarJogador').modal('show');
-        },
-        error: function(xhr, status, error) {
-            console.error(error);
-            alert('Ocorreu um erro ao buscar os detalhes do jogador. Por favor, tente novamente.');
-        }
-    });
-});
+                        // Exibir a modal de edição
+                        $('#modalEditarJogador').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert('Ocorreu um erro ao buscar os detalhes do jogador. Por favor, tente novamente.');
+                    }
+                });
+            });
 
 
 
@@ -217,6 +217,30 @@ $(document).on('click', '.btn-editar', function(e) {
 
         });
         
+        //Editar o "Activo"
+        $(document).ready(function() {
+            // Evento de mudança para o checkbox "Ativo"
+            $(document).on('change', '.checkbox-ativo', function() {
+                var jogadorId = $(this).data('jogador-id');
+                var ativo = $(this).is(':checked') ? 1 : 0;
+                
+                // Enviar os detalhes atualizados do jogador para o servidor usando AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '/atualizar_ativo/' + jogadorId,
+                    data: {
+                        ativo: ativo
+                    },
+                    success: function(response) {
+                        // Se a atualização for bem-sucedida, não é necessário fazer mais nada
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert('Ocorreu um erro ao atualizar o estado do jogador. Por favor, tente novamente.');
+                    }
+                });
+            });
+        });
         
         
 
